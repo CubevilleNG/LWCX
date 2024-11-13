@@ -324,7 +324,9 @@ public class LWCPlayerListener implements Listener {
         Entity entity = (Entity) holder;
         if (plugin.getLWC().isProtectable(entity.getType())) {
             if (!plugin.getLWC().hasPermission(player, "lwc.protect")
-                    && plugin.getLWC().hasPermission(player, "lwc.deny") && !plugin.getLWC().isAdmin(player)
+                    && plugin.getLWC().hasPermission(player, "lwc.deny")
+                    && !plugin.getLWC().isBypassEnabled(player)
+                    && !plugin.getLWC().isAdmin(player)
                     && !plugin.getLWC().isMod(player)) {
                 plugin.getLWC().sendLocale(player, "protection.interact.error.blocked");
                 event.setCancelled(true);
@@ -591,7 +593,9 @@ public class LWCPlayerListener implements Listener {
         // Prevent players with lwc.deny from interacting with blocks that have an inventory
         if (state instanceof InventoryHolder && lwc.isProtectable(block)) {
             if (!lwc.hasPermission(player, "lwc.protect") && lwc.hasPermission(player, "lwc.deny")
-                    && !lwc.isAdmin(player) && !lwc.isMod(player)) {
+                    && !plugin.getLWC().isBypassEnabled(player)
+                    && !lwc.isAdmin(player)
+                    && !lwc.isMod(player)) {
                 if (usingMainHand) {
                     lwc.sendLocale(player, "protection.interact.error.blocked");
                 }
@@ -731,6 +735,7 @@ public class LWCPlayerListener implements Listener {
         // remove the place from the player cache and reset anything they can
         // access
         LWCPlayer.removePlayer(event.getPlayer());
+        LWC.getInstance().setBypassStatus(event.getPlayer(), false);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -886,9 +891,9 @@ public class LWCPlayerListener implements Listener {
         }
 
         // Can they admin it?
-        boolean canAdmin = lwc.canAdminProtection(player, protection);
+        boolean canAdmin = lwc.canAdminProtection(player, protection) && lwc.isBypassEnabled(player);
         // Can they access it? (using getAccess instead of canAccessProtection since that is only for opening)
-        boolean canAccess = lwc.isMod(player);
+        boolean canAccess = lwc.isMod(player) && lwc.isBypassEnabled(player);
         if (protection.getAccess(player.getUniqueId().toString(), Permission.Type.PLAYER) == Permission.Access.PLAYER) {
             canAccess = true;
         } else if (protection.getAccess(player.getName(), Permission.Type.PLAYER) == Permission.Access.PLAYER) {
@@ -957,8 +962,8 @@ public class LWCPlayerListener implements Listener {
         // If it's a display chest, check permission.
         if (protection.getType() == Protection.Type.DISPLAY) {
             // Can they admin it? (remove items/etc)
-            boolean canMod = lwc.isMod(player);
-            boolean canAdmin = lwc.canAdminProtection(player, protection);
+            boolean canMod = lwc.isMod(player) && lwc.isBypassEnabled(player);
+            boolean canAdmin = lwc.canAdminProtection(player, protection) && lwc.isBypassEnabled(player);
 
             // nope.avi
             if (!canMod && !canAdmin) {
@@ -969,8 +974,8 @@ public class LWCPlayerListener implements Listener {
         } else if (protection.getType() == Protection.Type.SUPPLY &&
                 event.getRawSlots().stream().anyMatch(slot -> isRawSlotInTopInventory(event.getView(), slot))) {
             // Can they admin it? (remove items/etc)
-            boolean canMod = lwc.isMod(player);
-            boolean canAdmin = lwc.canAdminProtection(player, protection);
+            boolean canMod = lwc.isMod(player) && lwc.isBypassEnabled(player);
+            boolean canAdmin = lwc.canAdminProtection(player, protection) && lwc.isBypassEnabled(player);
 
             // nope.avi
             if (!canMod && !canAdmin) {

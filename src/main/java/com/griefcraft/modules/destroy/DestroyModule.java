@@ -57,7 +57,7 @@ public class DestroyModule extends JavaModule {
         boolean isOwner = protection.isOwner(player);
 
         if (isOwner) {
-            if (!lwc.isAdmin(player) && Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "readonly-remove"))) {
+            if (!lwc.isAdmin(player) && !lwc.isBypassEnabled(player) && Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "readonly-remove"))) {
                 lwc.sendLocale(player, "protection.accessdenied");
                 event.setCancelled(true);
                 return;

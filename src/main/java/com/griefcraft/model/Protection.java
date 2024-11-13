@@ -399,7 +399,7 @@ public class Protection {
             return true;
         }
 
-        return lwc.isAdmin(player);
+        return lwc.isAdmin(player) && lwc.isBypassEnabled(player);
     }
 
     /**

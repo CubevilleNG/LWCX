@@ -72,7 +72,7 @@ public class FreeModule extends JavaModule {
             }
         }
 
-        if (!lwc.isAdmin(player)
+        if (!lwc.isAdmin(player) && !lwc.isBypassEnabled(player)
                 && Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "readonly-remove"))) {
             lwc.sendLocale(player, "protection.accessdenied");
             return;
@@ -139,7 +139,7 @@ public class FreeModule extends JavaModule {
             return;
         }
 
-        if (!lwc.isAdmin(player)
+        if (!lwc.isAdmin(player) && !lwc.isBypassEnabled(player)
                 && Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "readonly-remove"))) {
             lwc.sendLocale(player, "protection.accessdenied");
             return;

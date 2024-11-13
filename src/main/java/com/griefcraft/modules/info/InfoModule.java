@@ -70,7 +70,7 @@ public class InfoModule extends JavaModule {
                 "type", type);
 
         // If the event gives them admin permission, or they're already an admin or mod, allow them to view full info
-        boolean canViewFullInfo = event.canAdmin() || lwc.isAdmin(player) || lwc.isMod(player);
+        boolean canViewFullInfo = event.canAdmin() || (lwc.isAdmin(player) && lwc.isBypassEnabled(player)) || (lwc.isMod(player) && lwc.isBypassEnabled(player));
 
         if (canViewFullInfo) {
             if (protection.getType() == Protection.Type.PRIVATE || protection.getType() == Protection.Type.DONATION

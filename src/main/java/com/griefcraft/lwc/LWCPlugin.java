@@ -48,6 +48,7 @@ import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -185,6 +186,20 @@ public class LWCPlugin extends JavaPlugin {
             if (aliasCommand != null) {
                 lwc.getModuleLoader().dispatchEvent(new LWCCommandEvent(sender, aliasCommand, aliasArgs));
                 return true;
+            }
+
+            if (commandName.equalsIgnoreCase("lwc") && argString.equalsIgnoreCase("bypass")) {
+                Player player = (Player) sender;
+                if (lwc.isAdmin(player) || lwc.isMod(player)) {
+                    if(lwc.isBypassEnabled(player)) {
+                        lwc.setBypassStatus(player, false);
+                        sender.sendMessage(ChatColor.DARK_AQUA + "You are no longer bypassing LWC protections.");
+                    } else {
+                        lwc.setBypassStatus(player, true);
+                        sender.sendMessage(ChatColor.DARK_AQUA + "You are now bypassing LWC protections.");
+                    }
+                    return true;
+                }
             }
         }
 

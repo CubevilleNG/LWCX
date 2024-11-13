@@ -179,6 +179,11 @@ public class LWC {
      */
     private boolean alternativeHoppers;
 
+    /**
+     * List of players with lwc bypass on
+     */
+    private Set<UUID> bypassList;
+
     public LWC(LWCPlugin plugin) {
         this.plugin = plugin;
         LWC.instance = this;
@@ -188,6 +193,7 @@ public class LWC {
         defaultsCache = new DefaultsCache(this);
         backupManager = new BackupManager();
         moduleLoader = new ModuleLoader(this);
+        bypassList = new HashSet<>();
     }
 
     /**
@@ -672,7 +678,7 @@ public class LWC {
                 boolean isOwner = protection.isOwner(player);
                 boolean showMyNotices = configuration.getBoolean("core.showMyNotices", true);
 
-                if (!isOwner || (isOwner && (showMyNotices || permShowNotices))) {
+                if ((!isOwner || (isOwner && (showMyNotices || permShowNotices))) && isBypassEnabled(player)) {
                     String owner;
 
                     // replace your username with "you" if you own the protection
@@ -722,6 +728,20 @@ public class LWC {
     }
 
     /**
+     * Check a block to see if it is protectable
+     *
+     * @param player
+     * @param status
+     */
+    public void setBypassStatus(Player player, boolean status) {
+        if(status) {
+            bypassList.add(player.getUniqueId());
+        } else {
+            bypassList.remove(player.getUniqueId());
+        }
+    }
+
+    /**
      * Check if a player has the ability to access a protection
      *
      * @param player
@@ -734,11 +754,11 @@ public class LWC {
             return true;
         }
 
-        if (isAdmin(player)) {
+        if (isAdmin(player) && isBypassEnabled(player)) {
             return true;
         }
 
-        if (isMod(player)) {
+        if (isMod(player) && isBypassEnabled(player)) {
             Player protectionOwner = protection.getBukkitOwner();
 
             if (protectionOwner == null) {
@@ -815,6 +835,16 @@ public class LWC {
         moduleLoader.dispatchEvent(event);
 
         return event.getAccess() == Permission.Access.PLAYER || event.getAccess() == Permission.Access.ADMIN;
+    }
+
+    /**
+     * Check if a player has bypass turned on
+     *
+     * @param player the player to check
+     * @return true if the player has bypass enabled
+     */
+    public boolean isBypassEnabled(Player player) {
+        return bypassList.contains(player.getUniqueId());
     }
 
     /**
