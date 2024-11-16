@@ -891,7 +891,7 @@ public class LWCPlayerListener implements Listener {
         }
 
         // Can they admin it?
-        boolean canAdmin = lwc.canAdminProtection(player, protection) && lwc.isBypassEnabled(player);
+        boolean canAdmin = lwc.canAdminProtection(player, protection);
         // Can they access it? (using getAccess instead of canAccessProtection since that is only for opening)
         boolean canAccess = lwc.isMod(player) && lwc.isBypassEnabled(player);
         if (protection.getAccess(player.getUniqueId().toString(), Permission.Type.PLAYER) == Permission.Access.PLAYER) {
@@ -963,7 +963,7 @@ public class LWCPlayerListener implements Listener {
         if (protection.getType() == Protection.Type.DISPLAY) {
             // Can they admin it? (remove items/etc)
             boolean canMod = lwc.isMod(player) && lwc.isBypassEnabled(player);
-            boolean canAdmin = lwc.canAdminProtection(player, protection) && lwc.isBypassEnabled(player);
+            boolean canAdmin = lwc.canAdminProtection(player, protection);
 
             // nope.avi
             if (!canMod && !canAdmin) {
@@ -975,7 +975,7 @@ public class LWCPlayerListener implements Listener {
                 event.getRawSlots().stream().anyMatch(slot -> isRawSlotInTopInventory(event.getView(), slot))) {
             // Can they admin it? (remove items/etc)
             boolean canMod = lwc.isMod(player) && lwc.isBypassEnabled(player);
-            boolean canAdmin = lwc.canAdminProtection(player, protection) && lwc.isBypassEnabled(player);
+            boolean canAdmin = lwc.canAdminProtection(player, protection);
 
             // nope.avi
             if (!canMod && !canAdmin) {

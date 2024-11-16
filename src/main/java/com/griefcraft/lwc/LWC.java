@@ -391,7 +391,7 @@ public class LWC {
             return true;
         }
 
-        if (isAdmin(player)) {
+        if (isAdmin(player) && isBypassEnabled(player)) {
             return true;
         }
 
